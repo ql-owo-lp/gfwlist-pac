@@ -66,18 +66,30 @@ func genProxy(w http.ResponseWriter, r *http.Request) {
 		"google.com" : HostEntry {
 			httpEnabled : true,
 			httpsEnabled : true,
+			httpDisabled : false,
+			httpDisabled : false,
+			keywordEnabled : false,
 		},
 		"appspot.com" : HostEntry {
 			httpEnabled : true,
 			httpsEnabled : true,
+			httpDisabled : false,
+			httpDisabled : false,
+			keywordEnabled : false,
 		},
 		"twitter.com" : HostEntry {
 			httpEnabled : true,
 			httpsEnabled : true,
+			httpDisabled : false,
+			httpDisabled : false,
+			keywordEnabled : false,
 		},
 		"facebook.com" : HostEntry {
 			httpEnabled : true,
 			httpsEnabled : true,
+			httpDisabled : false,
+			httpDisabled : false,
+			keywordEnabled : false,
 		},
 	}
 
