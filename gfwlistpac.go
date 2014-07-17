@@ -23,6 +23,7 @@ type Greeting struct {
 func init() {
 	http.HandleFunc("/", root)
 	http.HandleFunc("/sign", sign)
+	http.HandleFunc("/pac", genProxy)
 }
 
 // guestbookKey returns the key used for all guestbook entries.
@@ -33,34 +34,59 @@ func guestbookKey(c appengine.Context) *datastore.Key {
 
 // [START func_root]
 func root(w http.ResponseWriter, r *http.Request) {
-	//	c := appengine.NewContext(r)
-	//	// Ancestor queries, as shown here, are strongly consistent with the High
-	//	// Replication Datastore. Queries that span entity groups are eventually
-	//	// consistent. If we omitted the .Ancestor from this query there would be
-	//	// a slight chance that Greeting that had just been written would not
-	//	// show up in a query.
-	//	// [START query]
-	//	q := datastore.NewQuery("Greeting").Ancestor(guestbookKey(c)).Order("-Date").Limit(10)
-	//	// [END query]
-	//	// [START getall]
-	//	greetings := make([]Greeting, 0, 10)
-	//	if _, err := q.GetAll(c, &greetings); err != nil {
-	//		http.Error(w, err.Error(), http.StatusInternalServerError)
-	//		return
-	//	}
-	//	// [END getall]
-	//	if err := guestbookTemplate.Execute(w, greetings); err != nil {
-	//		http.Error(w, err.Error(), http.StatusInternalServerError)
-	//	}
-
-	proxy := []string {
-		"SOCKS5 127.0.0.1:8087",
+	c := appengine.NewContext(r)
+	// Ancestor queries, as shown here, are strongly consistent with the High
+	// Replication Datastore. Queries that span entity groups are eventually
+	// consistent. If we omitted the .Ancestor from this query there would be
+	// a slight chance that Greeting that had just been written would not
+	// show up in a query.
+	// [START query]
+	q := datastore.NewQuery("Greeting").Ancestor(guestbookKey(c)).Order("-Date").Limit(10)
+	// [END query]
+	// [START getall]
+	greetings := make([]Greeting, 0, 10)
+	if _, err := q.GetAll(c, &greetings); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
-	pac := GeneratePac(proxy)
-	fmt.Fprintf(w, pac)
+	// [END getall]
+	if err := guestbookTemplate.Execute(w, greetings); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 }
 
 // [END func_root]
+
+func genProxy(w http.ResponseWriter, r *http.Request) {
+	proxy := []string {
+		"SOCKS5 127.0.0.1:8088",
+	}
+
+	addtnlList := map[string]HostEntry {
+		"google.com" : HostEntry {
+			httpEnabled : true,
+			httpsEnabled : true,
+		},
+		"appspot.com" : HostEntry {
+			httpEnabled : true,
+			httpsEnabled : true,
+		},
+		"twitter.com" : HostEntry {
+			httpEnabled : true,
+			httpsEnabled : true,
+		},
+		"facebook.com" : HostEntry {
+			httpEnabled : true,
+			httpsEnabled : true,
+		},
+	}
+
+	pac := GeneratePac(proxy, addtnlList)
+
+	w.Header().Set("Content-Type", "application/x-ns-proxy-autoconfig")
+
+	fmt.Fprintf(w, pac)
+}
 
 var guestbookTemplate = template.Must(template.New("book").Parse(`
 <html>
