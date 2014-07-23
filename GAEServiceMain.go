@@ -20,9 +20,16 @@ type Greeting struct {
 
 // [END greeting_struct]
 
+type GFWList struct {
+	AutoProxyTxt	string
+	AutoProxyTxtMD5	string
+	PacTxt			string
+	Date			time.Time
+}
+
 func init() {
-	http.HandleFunc("/", root)
-	http.HandleFunc("/sign", sign)
+//	http.HandleFunc("/", root)
+//	http.HandleFunc("/sign", sign)
 	http.HandleFunc("/pac", genProxy)
 }
 
