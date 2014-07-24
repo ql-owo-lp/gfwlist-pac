@@ -61,7 +61,7 @@ func generateJsDict(data GFWListData) (dic string) {
 func generatePac(proxy Proxy, dict string) (pac string) {
 	pac = "var FindProxyForURL = (function () {\n"
 	pac += dict+"\n"
-	proxyStr := proxy.Type + " " + proxy.Address + ":" + proxy.Port
+	proxyStr := proxy.Type + " " + proxy.Address + ":" + string(proxy.Port)
 	pac += "var PROXY = '"+proxyStr+"';"
 	pac += `
 	var DIRECT = 'DIRECT';

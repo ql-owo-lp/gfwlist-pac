@@ -58,45 +58,17 @@ func root(w http.ResponseWriter, r *http.Request) {
 // [END func_root]
 
 func genProxy(w http.ResponseWriter, r *http.Request) {
-	proxy := []string {
-		"SOCKS5 127.0.0.1:8088",
-	}
-
-	addtnlList := map[string]HostEntry {
-		"google.com" : HostEntry {
-			httpEnabled : true,
-			httpsEnabled : true,
-			httpDisabled : false,
-			httpsDisabled : false,
-			keywordEnabled : false,
-		},
-		"appspot.com" : HostEntry {
-			httpEnabled : true,
-			httpsEnabled : true,
-			httpDisabled : false,
-			httpsDisabled : false,
-			keywordEnabled : false,
-		},
-		"twitter.com" : HostEntry {
-			httpEnabled : true,
-			httpsEnabled : true,
-			httpDisabled : false,
-			httpsDisabled : false,
-			keywordEnabled : false,
-		},
-		"facebook.com" : HostEntry {
-			httpEnabled : true,
-			httpsEnabled : true,
-			httpDisabled : false,
-			httpsDisabled : false,
-			keywordEnabled : false,
-		},
-	}
-
 	gfwlistTxt := FetchGFWList()
 	gfwlistDat := ReadGFWList(gfwlistTxt)
-	gfwlist := GFWList{
-		DefaultProxy : "",
+
+	defaultProxy := Proxy {
+		Type : "SOCKS5",
+		Address : "127.0.0.1",
+		Port : 8088,
+	}
+
+	gfwlist := GFWList {
+		DefaultProxy : defaultProxy,
 		AutoProxyTxt : gfwlistTxt,
 		AutoProxyTxtMD5 : "",
 		ListData : gfwlistDat,

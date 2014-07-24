@@ -4,7 +4,7 @@ import "time"
 
 // a set of host entries
 type HostEntrySet    map[string]HostEntry
-type KeywordEntrySet        []KeywordEntry
+type KeywordEntrySet        []string
 
 /**
  * A host entry
@@ -20,15 +20,13 @@ type HostEntry struct {
 	keywordEnabled   bool
 }
 
-type KeywordEntry string
-
 /**
  * A proxy entry
  */
 type Proxy struct {
 	Type               string
 	Address            string
-	Port               string
+	Port               uint16
 }
 
 /**
