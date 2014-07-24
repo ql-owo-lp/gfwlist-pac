@@ -20,16 +20,9 @@ type Greeting struct {
 
 // [END greeting_struct]
 
-type GFWList struct {
-	AutoProxyTxt	string
-	AutoProxyTxtMD5	string
-	PacTxt			string
-	Date			time.Time
-}
-
 func init() {
-//	http.HandleFunc("/", root)
-//	http.HandleFunc("/sign", sign)
+	//	http.HandleFunc("/", root)
+	//	http.HandleFunc("/sign", sign)
 	http.HandleFunc("/pac", genProxy)
 }
 
@@ -100,11 +93,19 @@ func genProxy(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 
-	pac := GeneratePac(proxy, addtnlList)
+	gfwlistTxt := FetchGFWList()
+	gfwlistDat := ReadGFWList(gfwlistTxt)
+	gfwlist := GFWList{
+		DefaultProxy : "",
+		AutoProxyTxt : gfwlistTxt,
+		AutoProxyTxtMD5 : "",
+		ListData : gfwlistDat,
+	}
+	gfwlist.Output = GFWList2Pac(gfwlist)
 
 	w.Header().Set("Content-Type", "application/x-ns-proxy-autoconfig")
 
-	fmt.Fprintf(w, pac)
+	fmt.Fprintf(w, gfwlist.Output)
 }
 
 var guestbookTemplate = template.Must(template.New("book").Parse(`

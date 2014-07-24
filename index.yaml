@@ -4,3 +4,9 @@ indexes:
   properties:
   - name: Date
     direction: desc
+
+- kind: GFWList
+  ancestor: yes
+  properties:
+  - name: Date
+    direction: desc

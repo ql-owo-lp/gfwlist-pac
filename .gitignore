@@ -21,3 +21,7 @@ _testmain.go
 
 *.exe
 *.test
+
+.idea/*
+.idea
+*.iml
