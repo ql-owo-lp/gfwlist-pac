@@ -6,19 +6,38 @@ import "time"
 type HostEntrySet    map[string]HostEntry
 type KeywordEntrySet        []string
 
+const (
+	PROTOCOL_HTTP  = "0"
+	PROTOCOL_HTTPS = "1"
+)
+
 /**
  * A host entry
  */
 type HostEntry struct {
-	Protocol         string
-	ProxySelected    Proxy
+	HttpEnabled        bool
+	HttpsEnabled       bool
 
-	httpEnabled      bool
-	httpsEnabled     bool
-	httpDisabled     bool
-	httpsDisabled    bool
-	keywordEnabled   bool
+	keywordEnabled     bool
 }
+
+func (e HostEntry) ToJavaScript() (res string) {
+	res += "["
+	if e.HttpEnabled {
+		res += "1"
+	} else {
+		res += "0"
+	}
+	res += ","
+	if e.HttpsEnabled {
+		res += "1"
+	} else {
+		res += "0"
+	}
+	res += "]"
+	return
+}
+
 
 /**
  * A proxy entry
@@ -26,7 +45,11 @@ type HostEntry struct {
 type Proxy struct {
 	Type               string
 	Address            string
-	Port               uint16
+	Port               string
+}
+
+func (p Proxy) ToString() string {
+	return p.Type + " " + p.Address + ":" + p.Port
 }
 
 /**

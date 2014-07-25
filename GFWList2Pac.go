@@ -1,8 +1,6 @@
 package gfwlistpac
 
-import (
-	"strings"
-)
+import "strings"
 
 func GFWList2Pac(list GFWList) (res string) {
 	data := list.ListData
@@ -25,27 +23,18 @@ func generateJsDict(data GFWListData) (dic string) {
 	// generate host
 	dic = "var HOSTS={"
 	for key, value := range data.AllowedHosts {
-		_http := !value.httpDisabled && value.httpEnabled
-		_https := !value.httpsDisabled && value.httpsEnabled
-		if !_http && !_https {
+		if !value.HttpsEnabled && !value.HttpEnabled {
 			continue
 		}
-		dic += "\""+key+"\":{"
-		if _http {
-			dic += "\"http\":"+bool2String(_http)+","
-		}
-		if _https {
-			dic += "\"https\":"+bool2String(_https)+","
-		}
-		dic += "},"
+		dic += "\""+key+"\":" + value.ToJavaScript()+","
 	}
 	dic += "};"
 	// generate keywords
-	//	dic += "var KEYWORDS=["
-	//		for _, keyword := range data.AllowedKeywords {
-	//		dic += "\""+strings.Replace(keyword, "\"", "\\\"", -1)+"\","
-	//	}
-	//	dic += "];"
+	dic += "var KEYWORDS=["
+	for _, keyword := range data.AllowedKeywords {
+		dic += "\""+strings.Replace(keyword, "\"", "\\\"", -1)+"\","
+	}
+	dic += "];"
 	// generate exclude keywords
 	dic += "var X_KEYWORDS=["
 	for _, keyword := range data.ExcludedKeywords {
@@ -60,9 +49,9 @@ func generateJsDict(data GFWListData) (dic string) {
 
 func generatePac(proxy Proxy, dict string) (pac string) {
 	pac = "var FindProxyForURL = (function () {\n"
+	pac += "var PROTOCOL={\"http\":"+PROTOCOL_HTTP+",\"https\":"+PROTOCOL_HTTPS+"};"
 	pac += dict+"\n"
-	proxyStr := proxy.Type + " " + proxy.Address + ":" + string(proxy.Port)
-	pac += "var PROXY = '"+proxyStr+"';"
+	pac += "var PROXY = '"+proxy.ToString()+"';"
 	pac += `
 	var DIRECT = 'DIRECT';
 
@@ -70,7 +59,7 @@ func generatePac(proxy Proxy, dict string) (pac string) {
 		if (!host) {
 			return false;
 		} else if (HOSTS[host]) {
-			return HOSTS[host][protocol];
+			return (HOSTS[host][PROTOCOL[protocol]]);
 		} else {
 			return host.indexOf('.')>0 && lookupDomain(
 				host.slice(host.indexOf('.') +1),

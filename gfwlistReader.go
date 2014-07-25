@@ -72,32 +72,32 @@ func ReadGFWList(listContent string) (data GFWListData) {
 		} else {
 			// set default value here
 			entry = HostEntry{
-				httpEnabled : false,
-				httpsEnabled : false,
-				httpDisabled : false,
-				httpsDisabled : false,
+				HttpEnabled : false,
+				HttpsEnabled : false,
+
 				keywordEnabled : false,
 			}
 		}
 		// ||domain , means accept both http and https protocol
 		if strings.HasPrefix(curUrl, "||") {
-			entry.httpEnabled = true
-			entry.httpsEnabled = true
+			entry.HttpEnabled = true
+			entry.HttpsEnabled = true
 		} else if strings.HasPrefix(curUrl, "|http://") {
-			entry.httpEnabled = true
+			entry.HttpEnabled = true
 		} else if strings.HasPrefix(curUrl, "|https://") {
-			entry.httpsEnabled = true
-		} else if strings.HasPrefix(curUrl, "@@||") {
-			// overwrite existing
-			entry.httpDisabled = true
-			entry.httpsDisabled = true
-		}else if strings.HasPrefix(curUrl, "@@|http://") {
-			entry.httpDisabled = true
-		} else if strings.HasPrefix(curUrl, "@@|https://") {
-			entry.httpsDisabled = true
+			entry.HttpsEnabled = true
+//		} else if strings.HasPrefix(curUrl, "@@||") {
+//			// overwrite existing
+//			entry.HttpEnabled = false
+//			entry.HttpsEnabled = false
+//		}else if strings.HasPrefix(curUrl, "@@|http://") {
+//			entry.HttpEnabled = false
+//		} else if strings.HasPrefix(curUrl, "@@|https://") {
+//			entry.HttpsEnabled = false
 		} else {    // plain domain / keyword
-			entry.httpEnabled = true
+			entry.HttpEnabled = true
 			entry.keywordEnabled = true
+			// put this entry into keyword list as well
 			//			keywordList = append(keywordList, curUrl)
 		}
 		//		fmt.Println(curUrl,"->",host,":",entry)
