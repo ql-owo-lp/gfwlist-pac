@@ -6,7 +6,7 @@ import (
 )
 
 func TestGFWList2Pac(t *testing.T) {
-	gfwlistTxt := FetchGFWListDesktop()
+	gfwlistTxt := FetchGFWListLocal()
 	gfwlistDat := ReadGFWList(gfwlistTxt)
 
 	defaultProxy := Proxy {
@@ -22,6 +22,5 @@ func TestGFWList2Pac(t *testing.T) {
 		ListData : gfwlistDat,
 	}
 	gfwlist.Output = GFWList2Pac(gfwlist)
-
-	fmt.Println(gfwlist.Output)
+	fmt.Printf("%s", gfwlist.Output)
 }

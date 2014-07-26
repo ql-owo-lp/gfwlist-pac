@@ -23,22 +23,19 @@ func generateJsDict(data GFWListData) (dic string) {
 	// generate host
 	dic = "var HOSTS={"
 	for key, value := range data.AllowedHosts {
-		if !value.HttpsEnabled && !value.HttpEnabled {
-			continue
-		}
-		dic += "\""+key+"\":" + value.ToJavaScript()+","
+		dic += "\""+key+"\":"+value.ToJavaScript()+",\n"
 	}
 	dic += "};"
 	// generate keywords
 	dic += "var KEYWORDS=["
 	for _, keyword := range data.AllowedKeywords {
-		dic += "\""+strings.Replace(keyword, "\"", "\\\"", -1)+"\","
+		dic += "\""+strings.Replace(keyword, "\"", "\\\"", -1)+"\",\n"
 	}
 	dic += "];"
 	// generate exclude keywords
 	dic += "var X_KEYWORDS=["
 	for _, keyword := range data.ExcludedKeywords {
-		dic += "\""+strings.Replace(string(keyword), "\"", "\\\"", -1)+"\","
+		dic += "\""+strings.Replace(string(keyword), "\"", "\\\"", -1)+"\",\n"
 	}
 	dic += "];"
 	// delete additional ","
@@ -59,7 +56,10 @@ func generatePac(proxy Proxy, dict string) (pac string) {
 		if (!host) {
 			return false;
 		} else if (HOSTS[host]) {
-			return (HOSTS[host][PROTOCOL[protocol]]);
+			var prot = PROTOCOL[protocol];
+			if (!prot && prot != 0)
+				return false;
+			return HOSTS[host][prot];
 		} else {
 			return host.indexOf('.')>0 && lookupDomain(
 				host.slice(host.indexOf('.') +1),

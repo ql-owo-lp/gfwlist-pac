@@ -7,5 +7,5 @@ import (
 
 func TestFetchGFWList(t *testing.T) {
 	list := FetchGFWListDesktop()
-	fmt.Println(list)
+	fmt.Println(list != "")
 }
