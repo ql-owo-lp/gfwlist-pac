@@ -30,7 +30,7 @@ func genProxy(w http.ResponseWriter, r *http.Request) {
 	}
 	gfwlist.Output = GFWList2Pac(gfwlist)
 
-	//	w.Header().Set("Content-Type", "application/x-ns-proxy-autoconfig")
+	w.Header().Set("Content-Type", "application/x-ns-proxy-autoconfig")
 
 	fmt.Fprintf(w, "%s", gfwlist.Output)
 }
